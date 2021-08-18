@@ -24,12 +24,15 @@
 
         body {
             font-family: Custom;
+            background-image:url('http://localhost:8000/media/__sized__/products/oneshop_icon-removebg-preview-thumbnail-255x255.png') 100%;
+            background-repeat:no-repeat;
+            background-size:100%;
         }
 
         .section-header,
         .section-invoice-info {
             background-color: #EFF5F8;
-            height: 255px;
+            height: 290px;
         }
 
         .section-left {
@@ -104,6 +107,7 @@
         }
 
         .summary-row {
+            direction: rtl;
             line-height: normal;
         }
 
@@ -120,11 +124,13 @@
         }
 
         .products-table {
+            direction: rtl;
             width: 100%;
             line-height: 1.4;
         }
 
         .summary-table {
+            direction: rtl;
             width: 100%;
             line-height: 1.8;
             padding-top: 20px;
@@ -164,6 +170,7 @@
         }
 
         .cell-summary {
+            direction: rtl;
             width: 80%;
             text-align: right;
             padding-right: 30px;
@@ -207,121 +214,44 @@
     <div class="section-invoice-info section-right">
         <div class="content-padded">
             <span class="header-title">
-                {% trans "INVOICE INFORMATION" context "Invoice PDF header" %}
+                {% trans "פירוט קבלה" context "Invoice PDF header" %}
             </span>
             <span class="header-category">
-                {% trans "Invoice number:" context "Invoice PDF header: Invoice number" %}
+                {% trans "מספר קבלה:" context "Invoice PDF header: Invoice number" %}
             </span>
             <div class="padded-font-sm"></div>
             <span class="header-item">{{ invoice.number }}</span>
             <div class="padded-font"></div>
             <span class="header-category">
-                {% trans "Order:" context "Invoice PDF header: order number" %}
+                {% trans "הזמנה:" context "Invoice PDF header: order number" %}
             </span>
             <div class="padded-font-sm"></div>
             <span class="header-item">{{ order.id }}</span>
             <div class="padded-font"></div>
             <span class="header-category">
-                {% trans "Date:" context "Invoice PDF header" %}
+                {% trans "תאריך:" context "Invoice PDF header" %}
             </span>
             <div class="padded-font-sm"></div>
             <span class="header-item">{{ creation_date }}</span>
             <div class="padded-font"></div>
             <span class="header-category">
-                {% trans "Amount:" context "Invoice PDF amount (price)" %}
+                {% trans "סה״כ:" context "Invoice PDF amount (price)" %}
             </span>
             <div class="padded-font-sm"></div>
             <span class="header-item">{% price order.total_gross %}</span>
-        </div>
-    </div>
-    <div class="section-left">
-        <div class="content-tight-padded padded-top">
-            <span class="header-title">
-                {% trans "BILLING ADDRESS" context "Invoice PDF" %}
-            </span>
-            <br />
-            <span class="normal-text">
-                {{ order.billing_address.first_name }}
-                {{ order.billing_address.last_name }}
-            </span>
-            <br />
-            <span class="normal-text">{{ order.billing_address.street_address_1 }}</span>
-            <br />
-            {% if order.billing_address.street_address_2 %}
-                <span class="normal-text">{{ order.billing_address.street_address_2 }}</span>
-                <br />
-            {% endif %}
-            <span class="normal-text">{{ order.billing_address.country }}</span>
-            <br />
-            <span class="normal-text">{{ order.billing_address.city }}</span>
-            <br />
-            <span class="normal-text">{{ order.billing_address.postal_code }}</span>
-            <br />
-            <span class="normal-text">{{ order.billing_address.phone }}</span>
-            <br />
-            <span class="normal-text">{{ order.get_customer_email }}</span>
-            <br />
-        </div>
-    </div>
-    <div class="section-right">
-        <div class="content-tight-padded padded-top">
-            <span class="header-title">
-                {% trans "SHIPMENT ADDRESS" context "Invoice PDF" %}
-            </span>
-            <br />
-            <span class="normal-text">
-                {{ order.shipping_address.first_name }}
-                {{ order.shipping_address.last_name }}
-            </span>
-            <br />
-            <span class="normal-text">{{ order.shipping_address.street_address_1 }}</span>
-            <br />
-            {% if order.shipping_address.street_address_2 %}
-                <span class="normal-text">{{ order.shipping_address.street_address_2 }}</span>
-                <br />
-            {% endif %}
-            <span class="normal-text">{{ order.shipping_address.country }}</span>
-            <br />
-            <span class="normal-text">{{ order.shipping_address.city }}</span>
-            <br />
-            <span class="normal-text">{{ order.shipping_address.postal_code }}</span>
-            <br />
-            <span class="normal-text">{{ order.shipping_address.phone }}</span>
-            <br />
-            <span class="normal-text">{{ order.user_email }}</span>
-            <br />
-        </div>
-    </div>
-    <div class="content-tight-padded">
-        <div class="content-separator">&nbsp;</div>
-    </div>
-    <div class="section-left">
-        <div class="content-tight-padded padded-top">
-            <span class="header-title">{% trans "PAYMENT METHOD" context "Invoice PDF" %}</span>
-            <br />
-            {% if order.get_last_payment %}
-                <span class="normal-text">{{ order.get_last_payment.gateway }}</span>
-            {% else %}
-                <span class="normal-text">
-                    {% trans "Unpaid" context "Invoice PDF: Payment method value" %}
+            <div class="padded-font"></div>
+            {%if order.shipping_method_name %}
+                <span class="header-category">
+                    {% trans "מועד המשלוח:" context "Invoice PDF header" %}
                 </span>
-            {% endif %}
-            <br />
+                <div class="padded-font-sm"></div>
+                <span class="header-item">{{ order.shipping_method_name }}</span>
+                <div class="padded-font"></div>
+            {% endif%}
         </div>
-    </div>
-    <div class="section-right">
-        <div class="content-tight-padded padded-top">
-            <span class="header-title">{% trans "SHIPMENT METHOD" context "Invoice PDF" %}</span>
-            <br />
-            <span class="normal-text">{{ order.shipping_method_name }}</span>
-            <br />
-        </div>
-    </div>
-    <div class="content-tight-padded">
-        <div class="content-separator">&nbsp;</div>
     </div>
     <div class="content-padded">
-        <span class="header-title">{% trans "ITEMS ORDERED" context "Invoice PDF table header" %}</span>
+        <span class="header-title">{% trans "מוצרים בהזמנה" context "Invoice PDF table header" %}</span>
         {% include "invoices/invoice_products_table.html" with products=products_first_page %}
         {% if not rest_of_products|length %}
             {% if products_first_page|length == 4 %}

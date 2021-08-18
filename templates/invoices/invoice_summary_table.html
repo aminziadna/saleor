@@ -5,7 +5,7 @@
         <tr class="summary-row">
             <td class="cell-summary">
                 <span class="normal-text-table">
-                    {% trans "Subtotal" context "Invoice PDF summary" %}
+                    {% trans "סיכום ביניים" context "Invoice PDF summary" %}
                 </span>
             </td>
             <td class="cell-quantity"></td>
@@ -18,7 +18,7 @@
         <tr class="summary-row">
             <td class="cell-summary">
                 <span class="normal-text-table">
-                    {% trans "Delivery Cost" context "Invoice PDF summary" %}
+                    {% trans "עלות משלוח" context "Invoice PDF summary" %}
                 </span>
             </td>
             <td class="cell-quantity"></td>
@@ -31,20 +31,7 @@
         <tr class="summary-row">
             <td class="cell-summary">
                 <span class="normal-text-table">
-                    {% trans "Tax" context "Invoice PDF summary" %}
-                </span>
-            </td>
-            <td class="cell-quantity"></td>
-            <td class="cell-total-price">
-                <span class="header-item">
-                    {% price order.total.tax %}
-                </span>
-            </td>
-        </tr>
-        <tr class="summary-row">
-            <td class="cell-summary">
-                <span class="normal-text-table">
-                    <b>{% trans "Grand Total" context "Invoice PDF summary" %}</b>
+                    <b>{% trans "סה״כ לתשלום" context "Invoice PDF summary" %}</b>
                 </span>
             </td>
             <td class="cell-quantity"></td>

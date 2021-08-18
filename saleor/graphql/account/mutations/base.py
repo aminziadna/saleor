@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
-
+from django.contrib.auth.tokens import default_token_generator
 from ....account import events as account_events, models
 from ....account.emails import (
     send_set_password_email_with_url,
@@ -127,9 +127,10 @@ class RequestPasswordReset(BaseMutation):
             raise ValidationError(
                 {"redirect_url": error}, code=AccountErrorCode.INVALID
             )
-
         try:
             user = models.User.objects.get(email=email)
+            taker = default_token_generator.make_token(user)
+            # raise ValidationError({"token": ValidationError(taker, code=AccountErrorCode.NOT_FOUND)})
         except ObjectDoesNotExist:
             raise ValidationError(
                 {

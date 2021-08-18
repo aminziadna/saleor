@@ -10,8 +10,8 @@ from weasyprint import HTML
 from ...invoice.models import Invoice
 
 MAX_PRODUCTS_WITH_TABLE = 3
-MAX_PRODUCTS_WITHOUT_TABLE = 4
-MAX_PRODUCTS_PER_PAGE = 13
+MAX_PRODUCTS_WITHOUT_TABLE = 13
+MAX_PRODUCTS_PER_PAGE = 25
 
 
 def make_full_invoice_number(number=None, month=None, year=None):

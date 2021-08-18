@@ -7,6 +7,9 @@ from ..account import events as account_events
 from ..celeryconf import app
 from ..core.emails import get_email_context
 from ..core.utils.url import prepare_url
+import os
+import twilio
+from twilio.rest import Client
 
 REQUEST_EMAIL_CHANGE_TEMPLATE = "account/request_email_change"
 EMAIL_CHANGED_NOTIFICATION_TEMPLATE = "account/email_changed_notification"
@@ -18,6 +21,13 @@ def send_user_password_reset_email_with_url(redirect_url, user):
     """Trigger sending a password reset email for the given user."""
     token = default_token_generator.make_token(user)
     _send_password_reset_email_with_url.delay(user.email, redirect_url, user.pk, token)
+    client = Client("ACe4ac15857216b65e4ace070652efa5c5", "40b97c14f0b63e1e109ffa135ee6b7b3")
+    twPhone = "+972"+user.email[0:10]
+    message = client.messages.create(
+                              body='שלום הנה קישור לאיפוס סיסמה oneshop://oneshop_ps.com/resetToken=' + token,
+                              from_='+14017534743',
+                              to=twPhone
+                          )
 
 
 def send_account_confirmation_email(user, redirect_url):
