@@ -16,7 +16,6 @@ from ..discount.models import NotApplicable, OrderDiscount, Voucher, VoucherType
 from ..discount.utils import get_products_voucher_discount, validate_voucher_in_order
 from ..giftcard import events as gift_card_events
 from ..giftcard.models import GiftCard
-from ..giftcard.utils import calculate_expiry_date
 from ..order import FulfillmentStatus, OrderLineData, OrderStatus
 from ..order.models import Order, OrderLine
 from ..product.utils.digital_products import get_default_digital_content_settings
@@ -468,6 +467,8 @@ def set_gift_card_user_and_expiry_date(
     used_by_email: str,
     expiry_date_data: List[Tuple[int, "date"]],
 ):
+    from ..giftcard.utils import calculate_expiry_date
+
     if gift_card.used_by_email is None:
         gift_card.used_by = used_by_user
         gift_card.used_by_email = used_by_email
