@@ -16,9 +16,17 @@ from pytimeparse import parse
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
+try:
+    from saleor.custom_settings import * # noqa
+except Exception as e:
+    print(e)
+    pass
+
+
 
 def get_list(text):
     return [item.strip() for item in text.split(",")]
+
 
 
 def get_bool_from_env(name, default_value):

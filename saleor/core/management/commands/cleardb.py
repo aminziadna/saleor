@@ -54,44 +54,44 @@ class Command(BaseCommand):
         Order.objects.all().delete()
         self.stdout.write("Removed orders")
 
-        Product.objects.all().delete()
-        self.stdout.write("Removed products")
+        #Product.objects.all().delete()
+        #self.stdout.write("Removed products")
 
-        ProductType.objects.all().delete()
-        self.stdout.write("Removed product types")
+        #ProductType.objects.all().delete()
+        #self.stdout.write("Removed product types")
 
-        Attribute.objects.all().delete()
-        self.stdout.write("Removed attributes")
+        #Attribute.objects.all().delete()
+        #self.stdout.write("Removed attributes")
 
-        Category.objects.all().delete()
-        self.stdout.write("Removed categories")
+        #Category.objects.all().delete()
+#        self.stdout.write("Removed categories")
 
-        Collection.objects.all().delete()
-        self.stdout.write("Removed collections")
+ #       Collection.objects.all().delete()
+#        self.stdout.write("Removed collections")
 
-        Sale.objects.all().delete()
-        self.stdout.write("Removed sales")
+#        Sale.objects.all().delete()
+#        self.stdout.write("Removed sales")
 
-        ShippingMethod.objects.all().delete()
-        self.stdout.write("Removed shipping methods")
+  #      ShippingMethod.objects.all().delete()
+ #       self.stdout.write("Removed shipping methods")
 
-        ShippingZone.objects.all().delete()
-        self.stdout.write("Removed shipping zones")
+   #     ShippingZone.objects.all().delete()
+#        self.stdout.write("Removed shipping zones")
 
-        Voucher.objects.all().delete()
-        self.stdout.write("Removed vouchers")
+  #      Voucher.objects.all().delete()
+ #       self.stdout.write("Removed vouchers")
 
-        GiftCard.objects.all().delete()
-        self.stdout.write("Removed gift cards")
+   #     GiftCard.objects.all().delete()
+ #       self.stdout.write("Removed gift cards")
+#
+  #      self.stdout.write("Removed warehouses")
+   #     Warehouse.objects.all().delete()
 
-        self.stdout.write("Removed warehouses")
-        Warehouse.objects.all().delete()
+    #    Page.objects.all().delete()
+     #   self.stdout.write("Removed pages")
 
-        Page.objects.all().delete()
-        self.stdout.write("Removed pages")
-
-        Webhook.objects.all().delete()
-        self.stdout.write("Removed webhooks")
+        #Webhook.objects.all().delete()
+      #  self.stdout.write("Removed webhooks")
 
         # Delete all users except for staff members.
         staff = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
