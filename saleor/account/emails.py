@@ -24,7 +24,7 @@ def send_user_password_reset_email_with_url(redirect_url, user):
     client = Client("ACe4ac15857216b65e4ace070652efa5c5", "40b97c14f0b63e1e109ffa135ee6b7b3")
     twPhone = "+972"+user.email[0:10]
     message = client.messages.create(
-                              body='שלום הנה קישור לאיפוס סיסמה oneshop://oneshop_ps.com/resetToken=' + token,
+                              body='שלום הנה קישור לאיפוס סיסמה https://oneshop_ps.com/resetToken=' + token,
                               from_='+14017534743',
                               to=twPhone
                           )
