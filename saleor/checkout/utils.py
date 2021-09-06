@@ -51,7 +51,8 @@ def get_user_checkout(
                 "billing_address": user.default_billing_address,
             },
         )
-    return checkout_queryset.filter(user=user).first(), False
+    checkout_queryset.filter(user=user).delete()
+    return None, False
 
 
 def update_checkout_quantity(checkout):
