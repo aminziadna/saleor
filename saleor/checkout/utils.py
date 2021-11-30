@@ -4,6 +4,7 @@ from typing import Iterable, List, Optional, Tuple
 from django.core.exceptions import ValidationError
 from django.db.models import Max, Min, Sum
 from django.utils import timezone
+from graphene.types.scalars import Boolean
 from prices import Money, MoneyRange, TaxedMoneyRange
 
 from ..account.models import User
@@ -207,8 +208,28 @@ def _get_products_voucher_discount(
         prices = get_prices_of_discounted_specific_product(lines, voucher, discounts)
     if not prices:
         msg = "This offer is only valid for selected items."
-        raise NotApplicable(msg)
-    return get_products_voucher_discount(voucher, prices)
+        return Money(0, voucher.currency)
+    discounted_lines = get_discounted_lines(lines, voucher)
+    line :CheckoutLine
+    mpq:int = 0
+    mptotal = 0.0
+    maxval = 0.0
+    for line in discounted_lines:
+        if len(voucher.products.all() or []) == 1:
+            line_total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
+            after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
+            return Money(line_total.amount - after_discount, voucher.currency)
+        elif len(voucher.products.all() or []) > 1:
+            total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
+            maxval = max(maxval, line.variant.get_price(discounts or []).amount)
+            mptotal = mptotal + float(total.amount)
+            mpq = line.quantity + mpq
+    if len(voucher.products.all() or []) > 1:
+        after_discount = mpq // voucher.min_checkout_items_quantity * voucher.discount_value + mpq % voucher.min_checkout_items_quantity * maxval
+        return Money(mptotal - float(after_discount), voucher.currency)
+    # sum the prices of the discount and return it as Money Object
+    return Money(0,voucher.currency)
+
 
 
 def get_prices_of_discounted_specific_product(
@@ -326,13 +347,14 @@ def add_promo_code_to_checkout(
     lines: Iterable[CheckoutLine],
     promo_code: str,
     discounts: Optional[Iterable[DiscountInfo]] = None,
+    multidiscount:Optional[Boolean] = False,
 ):
     """Add gift card or voucher data to checkout.
 
     Raise InvalidPromoCode if promo code does not match to any voucher or gift card.
     """
     if promo_code_is_voucher(promo_code):
-        add_voucher_code_to_checkout(checkout, lines, promo_code, discounts)
+        add_voucher_code_to_checkout(checkout, lines, promo_code, discounts,multidiscount)
     elif promo_code_is_gift_card(promo_code):
         add_gift_card_code_to_checkout(checkout, promo_code)
     else:
@@ -344,6 +366,7 @@ def add_voucher_code_to_checkout(
     lines: Iterable[CheckoutLine],
     voucher_code: str,
     discounts: Optional[Iterable[DiscountInfo]] = None,
+    multidiscount:Optional[Boolean] = False,
 ):
     """Add voucher data to checkout by code.
 
@@ -354,7 +377,7 @@ def add_voucher_code_to_checkout(
     except Voucher.DoesNotExist:
         raise InvalidPromoCode()
     try:
-        add_voucher_to_checkout(checkout, lines, voucher, discounts)
+        add_voucher_to_checkout(checkout, lines, voucher, discounts,multidiscount)
     except NotApplicable:
         raise ValidationError(
             {
@@ -371,6 +394,7 @@ def add_voucher_to_checkout(
     lines: Iterable[CheckoutLine],
     voucher: Voucher,
     discounts: Optional[Iterable[DiscountInfo]] = None,
+    multidiscount:Optional[Boolean] = False,
 ):
     """Add voucher data to checkout.
 
@@ -382,7 +406,10 @@ def add_voucher_to_checkout(
     checkout.translated_discount_name = (
         voucher.translated.name if voucher.translated.name != voucher.name else ""
     )
-    checkout.discount = discount
+    if multidiscount:
+        checkout.discount = checkout.discount + discount
+    else:
+        checkout.discount = discount
     checkout.save(
         update_fields=[
             "voucher_code",

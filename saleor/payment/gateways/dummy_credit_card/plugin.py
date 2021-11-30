@@ -1,8 +1,11 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from django.conf import settings
-
+from saleor.account.models import User
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
+from saleor.plugins.error_codes import PluginErrorCode
+
+from ... import PaymentError
+from ...models import Payment
 
 from ..utils import get_supported_currencies
 from . import (
@@ -14,22 +17,13 @@ from . import (
     process_payment,
     refund,
     void,
+    list_client_sources,
 )
 
-GATEWAY_NAME = "Dummy Credit Card"
+GATEWAY_NAME = "Tranzila Credit Card"
 
 if TYPE_CHECKING:
     from ...interface import GatewayResponse, PaymentData, TokenConfig
-
-
-def require_active_plugin(fn):
-    def wrapped(self, *args, **kwargs):
-        previous = kwargs.get("previous_value", None)
-        if not self.active:
-            return previous
-        return fn(self, *args, **kwargs)
-
-    return wrapped
 
 
 class DummyCreditCardGatewayPlugin(BasePlugin):
@@ -37,9 +31,9 @@ class DummyCreditCardGatewayPlugin(BasePlugin):
     PLUGIN_NAME = GATEWAY_NAME
     DEFAULT_ACTIVE = False
     DEFAULT_CONFIGURATION = [
-        {"name": "Store customers card", "value": False},
+        {"name": "Store customers card", "value": True},
         {"name": "Automatic payment capture", "value": True},
-        {"name": "Supported currencies", "value": settings.DEFAULT_CURRENCY},
+        {"name": "Supported currencies", "value": "ILS,USD"},
     ]
     CONFIG_STRUCTURE = {
         "Store customers card": {
@@ -49,7 +43,7 @@ class DummyCreditCardGatewayPlugin(BasePlugin):
         },
         "Automatic payment capture": {
             "type": ConfigurationTypeField.BOOLEAN,
-            "help_text": "Determines if Saleor should automaticaly capture payments.",
+            "help_text": "Determines if Saleor should automatically capture payments.",
             "label": "Automatic payment capture",
         },
         "Supported currencies": {
@@ -74,52 +68,50 @@ class DummyCreditCardGatewayPlugin(BasePlugin):
     def _get_gateway_config(self):
         return self.config
 
-    @require_active_plugin
     def authorize_payment(
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return authorize(payment_information, self._get_gateway_config())
 
-    @require_active_plugin
     def capture_payment(
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return capture(payment_information, self._get_gateway_config())
 
-    @require_active_plugin
     def confirm_payment(
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return confirm(payment_information, self._get_gateway_config())
 
-    @require_active_plugin
     def refund_payment(
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return refund(payment_information, self._get_gateway_config())
 
-    @require_active_plugin
     def void_payment(
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return void(payment_information, self._get_gateway_config())
 
-    @require_active_plugin
     def process_payment(
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return process_payment(payment_information, self._get_gateway_config())
 
-    @require_active_plugin
     def get_client_token(self, token_config: "TokenConfig", previous_value):
         return get_client_token()
 
-    @require_active_plugin
     def get_supported_currencies(self, previous_value):
         config = self._get_gateway_config()
         return get_supported_currencies(config, GATEWAY_NAME)
 
-    @require_active_plugin
     def get_payment_config(self, previous_value):
         config = self._get_gateway_config()
         return [{"field": "store_customer_card", "value": config.store_customer}]
+
+    def list_payment_sources(
+        self, customer_id: str, previous_value
+    ) -> List["CustomerSource"]:
+        sources = list_client_sources(self._get_gateway_config(), customer_id)
+        previous_value.extend(sources)
+        return previous_value

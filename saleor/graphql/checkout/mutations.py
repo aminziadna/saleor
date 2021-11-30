@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from django.db.models import Prefetch
+from graphene.types.scalars import String
 
 from ...checkout import models
 from ...checkout.complete_checkout import complete_checkout
@@ -174,6 +175,7 @@ class CheckoutCreateInput(graphene.InputObjectType):
         )
     )
     billing_address = AddressInput(description="Billing address of the customer.")
+    promos = graphene.List(String, description="Promos for discount", required=False)
 
 
 class CheckoutCreate(ModelMutation, I18nMixin):
@@ -338,6 +340,10 @@ class CheckoutCreate(ModelMutation, I18nMixin):
         cls.save(info, checkout, cleaned_input)
         cls._save_m2m(info, checkout, cleaned_input)
         info.context.plugins.checkout_created(checkout)
+        lines = list(checkout)
+        for x in cleaned_input["promos"]:
+            add_promo_code_to_checkout(checkout, lines, x, info.context.discounts,True)
+        info.context.plugins.checkout_updated(checkout)
         return CheckoutCreate(checkout=checkout, created=True)
 
 

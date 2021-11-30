@@ -932,6 +932,7 @@ input CheckoutCreateInput {
   email: String
   shippingAddress: AddressInput
   billingAddress: AddressInput
+  promos:[String]
 }
 
 type CheckoutCustomerAttach {
