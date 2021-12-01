@@ -341,7 +341,7 @@ class CheckoutCreate(ModelMutation, I18nMixin):
         cls._save_m2m(info, checkout, cleaned_input)
         info.context.plugins.checkout_created(checkout)
         lines = list(checkout)
-        if cleaned_input["promos"]:
+        if "promos" in cleaned_input:
             for x in cleaned_input["promos"]:
                 add_promo_code_to_checkout(checkout, lines, x, info.context.discounts,True)
         info.context.plugins.checkout_updated(checkout)
