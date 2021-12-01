@@ -343,7 +343,7 @@ class CheckoutCreate(ModelMutation, I18nMixin):
         lines = list(checkout)
         if "promos" in cleaned_input:
             for x in cleaned_input["promos"]:
-                add_promo_code_to_checkout(checkout, lines, x, info.context.discounts,True)
+                add_promo_code_to_checkout(checkout, lines, str(x), info.context.discounts,True)
         info.context.plugins.checkout_updated(checkout)
         return CheckoutCreate(checkout=checkout, created=True)
 
