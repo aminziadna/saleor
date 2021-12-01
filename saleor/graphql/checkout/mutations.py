@@ -610,7 +610,7 @@ class CheckoutShippingAddressUpdate(BaseMutation, I18nMixin):
         with transaction.atomic():
             shipping_address.save()
             change_shipping_address_in_checkout(checkout, shipping_address)
-        recalculate_checkout_discount(checkout, lines, info.context.discounts)
+        # recalculate_checkout_discount(checkout, lines, info.context.discounts)
 
         info.context.plugins.checkout_updated(checkout)
         return CheckoutShippingAddressUpdate(checkout=checkout)
