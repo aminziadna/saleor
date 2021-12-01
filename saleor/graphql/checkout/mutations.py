@@ -175,7 +175,7 @@ class CheckoutCreateInput(graphene.InputObjectType):
         )
     )
     billing_address = AddressInput(description="Billing address of the customer.")
-    promos = graphene.List(String, description="Promos for discount", required=False)
+    promos = graphene.List(graphene.String, description="Promos for discount", required=False,default=None)
 
 
 class CheckoutCreate(ModelMutation, I18nMixin):
@@ -341,8 +341,9 @@ class CheckoutCreate(ModelMutation, I18nMixin):
         cls._save_m2m(info, checkout, cleaned_input)
         info.context.plugins.checkout_created(checkout)
         lines = list(checkout)
-        for x in cleaned_input["promos"]:
-            add_promo_code_to_checkout(checkout, lines, x, info.context.discounts,True)
+        if cleaned_input["promos"]:
+            for x in cleaned_input["promos"]:
+                add_promo_code_to_checkout(checkout, lines, x, info.context.discounts,True)
         info.context.plugins.checkout_updated(checkout)
         return CheckoutCreate(checkout=checkout, created=True)
 
