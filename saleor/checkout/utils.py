@@ -220,8 +220,8 @@ def _get_products_voucher_discount(
             after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
             return Money(line_total.amount - after_discount, voucher.currency)
         elif len(voucher.products.all() or []) > 1:
-            total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
-            maxval = max(maxval, line.variant.get_price(discounts or []).amount)
+            total = calculations.checkout_line_total(line=line, discounts=[]).gross
+            maxval = max(maxval, line.variant.get_price([]).amount)
             mptotal = mptotal + float(total.amount)
             mpq = line.quantity + mpq
     if len(voucher.products.all() or []) > 1:
