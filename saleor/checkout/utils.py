@@ -425,7 +425,7 @@ def add_voucher_to_checkout(
     )
     if multidiscount:
         if discount.amount > 0:
-            raise NotImplementedError("checkout disc: " + checkout.discount.amount + " , checkout code " + voucher.code)
+            raise NotImplementedError("checkout disc: " + str(checkout.discount.amount) + " , checkout code " + voucher.code)
         checkout.discount = checkout.discount + discount
     else:
         checkout.discount = discount
