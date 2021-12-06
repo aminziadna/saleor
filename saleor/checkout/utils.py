@@ -251,7 +251,7 @@ def _get_products_voucher_discount(
             totalUndiscountid += line.quantity * price
     if len(voucher.products.all() or []) > 0:
         totalAfterDiscount = quantity // voucher.min_checkout_items_quantity * voucher.discount_value + quantity % voucher.min_checkout_items_quantity * maxi
-    return Money(totalUndiscountid - totalAfterDiscount,voucher.currency)
+    return Money(totalUndiscountid - float(totalAfterDiscount),voucher.currency)
 
     # discounted_lines = get_discounted_lines(lines, voucher)
     # line :CheckoutLine
