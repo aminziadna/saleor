@@ -240,7 +240,7 @@ def _get_products_voucher_discount(
     quantity =0
     for line in discounted_lines or []:
         if line != None:
-            price = line.variant.get_price([])
+            price = line.variant.get_price(discounts = discounts or [])
             if float(maxi) < float(price.amount):
                 maxi = float(price.amount)
             quantity += line.quantity
