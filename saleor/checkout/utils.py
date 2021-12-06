@@ -7,8 +7,6 @@ from django.utils import timezone
 from graphene.types.scalars import Boolean
 from prices import Money, MoneyRange, TaxedMoneyRange
 
-from saleor.product.models import Product
-
 from ..account.models import User
 from ..checkout import calculations
 from ..checkout.error_codes import CheckoutErrorCode
@@ -222,9 +220,9 @@ def _get_shipping_voucher_discount_for_checkout(
 #     });
 #     return totalUnDiscounted - totalAfterDiscount;
 
-def getProductLine(lines,sku):
+def getProductLine(lines,name):
     for line in lines:
-        if line.variant.sku == sku:
+        if line.variant.name == name:
             return line
     return None
 
@@ -243,10 +241,9 @@ def _get_products_voucher_discount(
     maxi = 0
     quantity =0
     line :CheckoutLine
-    product:Product
     names = ""
     for product in voucher.products.all() or []:
-        line = getProductLine(lines, product.default_variant.sku)
+        line = getProductLine(lines, product.name)
         if line != None:
             names += " " + line.variant.name
             price = line.variant.get_price(discounts = discounts or[])
