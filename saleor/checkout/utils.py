@@ -247,31 +247,7 @@ def _get_products_voucher_discount(
             totalUndiscountid += float(line.quantity * float(price.amount))
     if len(voucher.products.all() or []) > 0:
         totalAfterDiscount = float(quantity // voucher.min_checkout_items_quantity * voucher.discount_value) + float(quantity % voucher.min_checkout_items_quantity * maxi)
-    # raise NotImplementedError("voucher : " + str(voucher.code) + " products names: "+ names+ " total discount : "+ str(totalUndiscountid - float(totalAfterDiscount)))
     return Money(totalUndiscountid - float(totalAfterDiscount),voucher.currency)
-
-    # discounted_lines = get_discounted_lines(lines, voucher)
-    # line :CheckoutLine
-    # mpq:int = 0
-    # mptotal = 0.0
-    # maxval = 0.0
-    # for line in discounted_lines:
-    #     if len(voucher.products.all() or discounted_lines or []) == 1:
-    #         line_total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
-    #         after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
-    #         return Money(line_total.amount - after_discount, voucher.currency)
-    #     elif len(voucher.products.all() or []) > 1:
-    #         total = calculations.checkout_line_total(line=line, discounts=[]).gross
-    #         maxval = max(maxval, line.variant.get_price([]).amount)
-    #         mptotal = mptotal + float(total.amount)
-    #         mpq = line.quantity + mpq
-    # if len(voucher.products.all() or []) > 1:
-    #     after_discount = mpq // voucher.min_checkout_items_quantity * voucher.discount_value + mpq % voucher.min_checkout_items_quantity * maxval
-    #     return Money(mptotal - float(after_discount), voucher.currency)
-    # # sum the prices of the discount and return it as Money Object
-    # return Money(0,voucher.currency)
-
-
 
 def get_prices_of_discounted_specific_product(
     lines: List[CheckoutLine],
