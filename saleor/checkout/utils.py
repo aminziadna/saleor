@@ -241,9 +241,11 @@ def _get_products_voucher_discount(
     maxi = 0
     quantity =0
     line :CheckoutLine
+    names = ""
     for product in voucher.products.all() or []:
         line = getProductLine(lines, product.id)
         if line != None:
+            names += " " + line.variant.name
             price = line.variant.get_price(discounts = discounts or[])
             if maxi < price:
                 maxi = price
@@ -251,6 +253,7 @@ def _get_products_voucher_discount(
             totalUndiscountid += line.quantity * price
     if len(voucher.products.all() or []) > 0:
         totalAfterDiscount = quantity // voucher.min_checkout_items_quantity * voucher.discount_value + quantity % voucher.min_checkout_items_quantity * maxi
+    raise NotImplementedError("voucher : " + str(voucher.code) + " products names: "+ names+ " total discount : "+ str(totalUndiscountid - float(totalAfterDiscount)))
     return Money(totalUndiscountid - float(totalAfterDiscount),voucher.currency)
 
     # discounted_lines = get_discounted_lines(lines, voucher)
