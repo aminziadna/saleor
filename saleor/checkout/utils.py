@@ -246,7 +246,7 @@ def _get_products_voucher_discount(
             quantity += line.quantity
             totalUndiscountid += float(line.quantity * float(price.amount))
     if len(voucher.products.all() or []) > 0:
-        totalAfterDiscount = quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (quantity % voucher.min_checkout_items_quantity * maxi).amount
+        totalAfterDiscount = quantity // voucher.min_checkout_items_quantity * voucher.discount_value + quantity % voucher.min_checkout_items_quantity * maxi
     # raise NotImplementedError("voucher : " + str(voucher.code) + " products names: "+ names+ " total discount : "+ str(totalUndiscountid - float(totalAfterDiscount)))
     return Money(totalUndiscountid - float(totalAfterDiscount),voucher.currency)
 
