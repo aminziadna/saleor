@@ -243,7 +243,7 @@ def _get_products_voucher_discount(
     line :CheckoutLine
     names = ""
     for product in voucher.products.all() or []:
-        names += " " + product.variant.sku
+        names += " " + product.sku
         line = getProductLine(lines, product.name)
         if line != None:
             price = line.variant.get_price(discounts = discounts or[])
