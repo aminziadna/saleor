@@ -239,6 +239,7 @@ def _get_products_voucher_discount(
     line :CheckoutLine
     names = ""
     discounted_lines = get_discounted_lines(lines, voucher)
+    raise NotImplementedError("fck uyou : " + str(len(discounted_lines)) + " ::: "+ str(discounted_lines))
     for line in discounted_lines:
         names += " " + line.variant.name
     totalAfterDiscount = 0.0
