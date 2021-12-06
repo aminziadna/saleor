@@ -220,11 +220,6 @@ def _get_shipping_voucher_discount_for_checkout(
 #     });
 #     return totalUnDiscounted - totalAfterDiscount;
 
-def getProductLine(lines,name):
-    for line in lines:
-        if line.variant.name == name:
-            return line
-    return None
 
 def _get_products_voucher_discount(
     lines, voucher:Voucher, discounts: Optional[Iterable[DiscountInfo]] = None
@@ -239,15 +234,11 @@ def _get_products_voucher_discount(
     line :CheckoutLine
     names = ""
     discounted_lines = get_discounted_lines(lines, voucher)
-    raise NotImplementedError("fck uyou : " + str(len(discounted_lines)) + " ::: "+ str(discounted_lines))
-    for line in discounted_lines:
-        names += " " + line.variant.name
     totalAfterDiscount = 0.0
     totalUndiscountid = 0.0
     maxi = 0
     quantity =0
-    for product in voucher.products.all() or []:
-        line = getProductLine(lines, product.name)
+    for line in discounted_lines or []:
         if line != None:
             price = line.variant.get_price(discounts = discounts or[])
             if maxi < price:
