@@ -215,7 +215,7 @@ def _get_products_voucher_discount(
     mptotal = 0.0
     maxval = 0.0
     for line in discounted_lines:
-        if len(voucher.products.all() or []) == 1:
+        if len(voucher.products.all() or discounted_lines or []) == 1:
             line_total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
             after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
             if voucher.code == "Kik":
