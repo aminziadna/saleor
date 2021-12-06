@@ -210,8 +210,6 @@ def _get_products_voucher_discount(
         msg = "This offer is only valid for selected items."
         return Money(0, voucher.currency)
     discounted_lines = get_discounted_lines(lines, voucher)
-    if voucher.code == "Kik":
-        raise NotImplementedError("kik    " + str(discounted_lines))
     line :CheckoutLine
     mpq:int = 0
     mptotal = 0.0
@@ -220,6 +218,8 @@ def _get_products_voucher_discount(
         if len(voucher.products.all() or []) == 1:
             line_total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
             after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
+            if voucher.code == "Kik":
+                raise NotImplementedError("kik    total : " + str(line_total.amount) + " after discount : "+ str(after_discount + " discount: " + str(line_total.amount - after_discount)))
             return Money(line_total.amount - after_discount, voucher.currency)
         elif len(voucher.products.all() or []) > 1:
             total = calculations.checkout_line_total(line=line, discounts=[]).gross
