@@ -7,7 +7,7 @@ from django.utils import timezone
 from graphene.types.scalars import Boolean
 from prices import Money, MoneyRange, TaxedMoneyRange
 
-from saleor.graphql.product.types.products import Product
+from saleor.product.models import Product
 
 from ..account.models import User
 from ..checkout import calculations
@@ -246,7 +246,7 @@ def _get_products_voucher_discount(
     product:Product
     names = ""
     for product in voucher.products.all() or []:
-        line = getProductLine(lines, product.variants[0].sku)
+        line = getProductLine(lines, product.default_variant.sku)
         if line != None:
             names += " " + line.variant.name
             price = line.variant.get_price(discounts = discounts or[])
