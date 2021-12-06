@@ -236,14 +236,16 @@ def _get_products_voucher_discount(
     if not prices:
         msg = "This offer is only valid for selected items."
         return Money(0, voucher.currency)
+    line :CheckoutLine
+    names = ""
+    discounted_lines = get_discounted_lines(lines, voucher)
+    for line in discounted_lines:
+        names += " " + line.variant.name
     totalAfterDiscount = 0.0
     totalUndiscountid = 0.0
     maxi = 0
     quantity =0
-    line :CheckoutLine
-    names = ""
     for product in voucher.products.all() or []:
-        names += " " + product.sku
         line = getProductLine(lines, product.name)
         if line != None:
             price = line.variant.get_price(discounts = discounts or[])
