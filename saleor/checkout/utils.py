@@ -210,8 +210,6 @@ def _get_products_voucher_discount(
         msg = "This offer is only valid for selected items."
         return Money(0, voucher.currency)
     discounted_lines = get_discounted_lines(lines, voucher)
-    if voucher.code == "Gleda":
-        raise NotImplementedError("fck "+ str(discounted_lines))
     line :CheckoutLine
     mpq:int = 0
     mptotal = 0.0
