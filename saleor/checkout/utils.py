@@ -425,8 +425,6 @@ def add_voucher_to_checkout(
     )
     if multidiscount:
         checkout.discount = checkout.discount + discount
-        if discount.amount > 0 and checkout.discount.amount > 32:
-            raise NotImplementedError("checkout disc: " + str(checkout.discount.amount) + " , checkout code " + voucher.code)
     else:
         checkout.discount = discount
     checkout.save(
