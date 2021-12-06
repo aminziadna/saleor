@@ -241,7 +241,7 @@ def _get_products_voucher_discount(
     for line in discounted_lines or []:
         if line != None:
             price = line.variant.get_price(discounts = discounts or[])
-            if maxi < price:
+            if maxi < price.amount:
                 maxi = price
             quantity += line.quantity
             totalUndiscountid += line.quantity * price
