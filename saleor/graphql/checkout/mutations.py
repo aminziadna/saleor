@@ -347,16 +347,7 @@ class CheckoutCreate(ModelMutation, I18nMixin):
             for x in cleaned_input["promos"]:
                 thisdict[x] = str(checkout.discount.amount)
                 add_promo_code_to_checkout(checkout, lines, str(x), info.context.discounts,True)
-        # lastItem = 0
-        # removeKeys = []
-        # for x in thisdict:
-        #     if thisdict[x] == 0 or thisdict[x] == lastItem:
-        #         removeKeys.append(x)
-        #     else:
-        #         lastItem = thisdict[x]
-        # for x in removeKeys:
-        #     del thisdict[x]
-        raise NotImplementedError("fck : "+ str(thisdict))
+        raise NotImplementedError("fck : " + str(thisdict))
         info.context.plugins.checkout_updated(checkout)
         return CheckoutCreate(checkout=checkout, created=True)
 

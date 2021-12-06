@@ -240,7 +240,7 @@ def _get_products_voucher_discount(
     quantity =0
     for line in discounted_lines or []:
         if line != None:
-            price = line.variant.get_price(discounts = discounts or[])
+            price = line.variant.get_price([])
             if float(maxi) < float(price.amount):
                 maxi = float(price.amount)
             quantity += line.quantity
@@ -424,6 +424,8 @@ def add_voucher_to_checkout(
         voucher.translated.name if voucher.translated.name != voucher.name else ""
     )
     if multidiscount:
+        if discount.amount > 0:
+            raise NotImplementedError("checkout disc: " + checkout.discount.amount + " , checkout code " + voucher.code)
         checkout.discount = checkout.discount + discount
     else:
         checkout.discount = discount
