@@ -356,7 +356,7 @@ class CheckoutCreate(ModelMutation, I18nMixin):
         #         lastItem = thisdict[x]
         # for x in removeKeys:
         #     del thisdict[x]
-        raise NotImplementedError("fck : "+ str(thisdict))
+        # raise NotImplementedError("fck : "+ str(thisdict))
         info.context.plugins.checkout_updated(checkout)
         return CheckoutCreate(checkout=checkout, created=True)
 
