@@ -243,9 +243,9 @@ def _get_products_voucher_discount(
     line :CheckoutLine
     names = ""
     for product in voucher.products.all() or []:
+        names += " " + product.name
         line = getProductLine(lines, product.name)
         if line != None:
-            names += " " + line.variant.name
             price = line.variant.get_price(discounts = discounts or[])
             if maxi < price:
                 maxi = price
