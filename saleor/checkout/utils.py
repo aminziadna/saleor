@@ -199,6 +199,33 @@ def _get_shipping_voucher_discount_for_checkout(
     return voucher.get_discount_amount_for(shipping_price)
 
 
+#     double totalAfterDiscount = 0.0;
+#     double totalUnDiscounted = 0.0;
+#     if (Repository.getInstance().salesResponse == null || Repository.getInstance().salesResponse.salesItems == null)
+#       return totalAfterDiscount;
+#     Repository.getInstance().salesResponse.salesItems.forEach((element) {
+#       double max = 0;
+#       int quantity = 0;
+#       element.products.forEach((pr) {
+#         var line = Repository.getInstance().cartList[pr.id];
+#         if (line != null) {
+#           if (max < line.price)
+#             max = line.price;
+#           quantity += line.orderedQuantity;
+#           totalUnDiscounted += line.orderedQuantity * line.price;
+#         }
+#       });
+#       if(element.quantity > 0)
+#         totalAfterDiscount += (quantity / element.quantity).floor() * element.total + (quantity.remainder(element.quantity)).floor() * max;
+#     });
+#     return totalUnDiscounted - totalAfterDiscount;
+
+def getProductLine(lines,id):
+    for line in lines:
+        if line.id == id:
+            return line
+    return None
+
 def _get_products_voucher_discount(
     lines, voucher:Voucher, discounts: Optional[Iterable[DiscountInfo]] = None
 ):
@@ -209,28 +236,43 @@ def _get_products_voucher_discount(
     if not prices:
         msg = "This offer is only valid for selected items."
         return Money(0, voucher.currency)
-    discounted_lines = get_discounted_lines(lines, voucher)
+    totalAfterDiscount = 0.0
+    totalUndiscountid = 0.0
+    maxi = 0
+    quantity =0
     line :CheckoutLine
-    mpq:int = 0
-    mptotal = 0.0
-    maxval = 0.0
-    for line in discounted_lines:
-        if len(voucher.products.all() or discounted_lines or []) == 1:
-            line_total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
-            after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
-            if voucher.code == "Kik":
-                raise NotImplementedError("kik    total : " + str(line_total.amount) + " after discount : "+ str(after_discount + " discount: " + str(line_total.amount - after_discount)))
-            return Money(line_total.amount - after_discount, voucher.currency)
-        elif len(voucher.products.all() or []) > 1:
-            total = calculations.checkout_line_total(line=line, discounts=[]).gross
-            maxval = max(maxval, line.variant.get_price([]).amount)
-            mptotal = mptotal + float(total.amount)
-            mpq = line.quantity + mpq
-    if len(voucher.products.all() or []) > 1:
-        after_discount = mpq // voucher.min_checkout_items_quantity * voucher.discount_value + mpq % voucher.min_checkout_items_quantity * maxval
-        return Money(mptotal - float(after_discount), voucher.currency)
-    # sum the prices of the discount and return it as Money Object
-    return Money(0,voucher.currency)
+    for product in voucher.products.all() or []:
+        line = getProductLine(lines, product.id)
+        if line != None:
+            price = line.variant.get_price(discounts = discounts or[])
+            if maxi < price:
+                maxi = price
+            quantity += line.quantity
+            totalUndiscountid += line.quantity * price
+    if voucher.products.all() > 0:
+        totalAfterDiscount = quantity // voucher.min_checkout_items_quantity * voucher.discount_value + quantity % voucher.min_checkout_items_quantity * maxi
+    return Money(totalUndiscountid - totalAfterDiscount,voucher.currency)
+
+    # discounted_lines = get_discounted_lines(lines, voucher)
+    # line :CheckoutLine
+    # mpq:int = 0
+    # mptotal = 0.0
+    # maxval = 0.0
+    # for line in discounted_lines:
+    #     if len(voucher.products.all() or discounted_lines or []) == 1:
+    #         line_total = calculations.checkout_line_total(line=line, discounts=discounts or []).gross
+    #         after_discount = line.quantity // voucher.min_checkout_items_quantity * voucher.discount_value + (line.quantity % voucher.min_checkout_items_quantity * line.variant.get_price([])).amount
+    #         return Money(line_total.amount - after_discount, voucher.currency)
+    #     elif len(voucher.products.all() or []) > 1:
+    #         total = calculations.checkout_line_total(line=line, discounts=[]).gross
+    #         maxval = max(maxval, line.variant.get_price([]).amount)
+    #         mptotal = mptotal + float(total.amount)
+    #         mpq = line.quantity + mpq
+    # if len(voucher.products.all() or []) > 1:
+    #     after_discount = mpq // voucher.min_checkout_items_quantity * voucher.discount_value + mpq % voucher.min_checkout_items_quantity * maxval
+    #     return Money(mptotal - float(after_discount), voucher.currency)
+    # # sum the prices of the discount and return it as Money Object
+    # return Money(0,voucher.currency)
 
 
 
